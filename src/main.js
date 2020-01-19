@@ -26,6 +26,12 @@ new Vue({
             appId: "1:584415028103:web:91b86fa7e9a8480b48a922",
             measurementId: "G-R725K7PSRQ"
         })
+
+        fb.auth().onAuthStateChanged(user => {
+            if (user){
+                this.$store.dispatch('autoLoginUser')
+            }
+        })
     },
     render: h => h(App)
 }).$mount('#app');
