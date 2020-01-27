@@ -21,6 +21,14 @@ export default {
         },
         loadAds(state, payload){
             state.ads = payload
+        },
+        updateAd(state, {title, description, id}){
+            const ad = state.ads.find(a =>{
+                return a.id === id
+            })
+
+            ad.title = title
+            ad.description = description
         }
     },
     actions: {
@@ -38,9 +46,35 @@ export default {
                 const imageExt = image.name.slice(image.name.lastIndexOf('.'))
 
                 const fileData = await fb.storage().ref(`ads/${ad.key}.${imageExt}`).put(image)
+
+
+
+                // const gsReference = storage.refFromURL('gs://ads-project-eb1b1.appspot.com')
+
+
+                const imageSrc = await fb.storage().ref(`ads/${ad.key}.${imageExt}`).child(`ads/${ad.key}.${imageExt}`).getDownloadURL().then(function(url) {
+                    // `url` is the download URL for 'images/stars.jpg'
+
+                    // This can be downloaded directly:
+                    var xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = function(event) {
+                        var blob = xhr.response;
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+
+                    // Or inserted into an <img> element:
+                    var img = document.getElementById(ad.key);
+                    img.src = url;
+                }).catch(function(error) {
+                    // Handle any errors
+                });
+
+
                 // console.log()
                 // const imageSrc = fileData.metadata.getDownloadURL().toString()
-                const imageSrc = fileData.getDownloadURL()
+                // const imageSrc = fileData.getDownloadURL()
                 console.log(imageSrc)
 
 
@@ -86,6 +120,25 @@ export default {
             } catch (e) {
                 commit('setError', e.message)
                 commit('setLoading', false)
+                throw e
+            }
+        },
+        async updateAd({commit}, {title, description, id}){
+            commit('clearError')
+            commit('setLoading', true)
+
+            try {
+                await fb.database().ref('ads').child(id).update({
+                    title, description
+                })
+                commit('updateAd', {
+                    title, description, id
+                })
+                commit('setLoading', true)
+            } catch (e) {
+                commit('setError', e.message)
+                commit('setLoading', true)
+
                 throw e
             }
         }

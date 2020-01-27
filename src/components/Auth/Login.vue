@@ -42,7 +42,6 @@
                                     type="password"
                                     v-model="password"
                                     :rules="passwordRules"
-
                             />
                         </v-form>
                     </v-card-text>
