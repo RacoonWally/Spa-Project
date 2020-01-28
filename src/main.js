@@ -7,9 +7,17 @@ import 'vuetify/dist/vuetify.min.css'
 import '@babel/polyfill'
 import 'vue-material-design-icons/styles.css';
 import * as fb from 'firebase'
+import BuyModalComponent from "./components/Shared/BuyModal";
+import colors from 'vuetify/lib/util/colors'
 
-
+Vue.use(vuetify, {
+    theme: {
+        primary: colors.red.darken1
+    }
+})
 Vue.config.productionTip = false
+Vue.component('app-buy-modal', BuyModalComponent)
+
 
 new Vue({
     router,
